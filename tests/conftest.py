@@ -216,14 +216,14 @@ def fastapi_server():
     """
     Start and manage a FastAPI test server, if needed for integration tests.
     """
-    server_url = 'http://127.0.0.1:8000/'
+    server_url = 'http://127.0.0.1:8000/health'
     logger.info("Starting test server...")
 
     try:
         process = subprocess.Popen(
             ['python', 'main.py'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
         )
         if not wait_for_server(server_url, timeout=30):
             raise ServerStartupError("Failed to start test server")

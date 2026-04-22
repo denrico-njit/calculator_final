@@ -1,29 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Calculations App{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
-    {% block head %}{% endblock %}
-</head>
-<body>
-    <header>
-        <h1>Calculations App</h1>
-        <nav>
-            <a href="{{ url_for('read_index') }}">Home</a>
-            <a href="{{ url_for('login_page') }}">Login</a>
-            <a href="{{ url_for('register_page') }}">Register</a>
-        </nav>
-    </header>
+{% extends "layout.html" %}
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+{% block title %}Home{% endblock %}
 
-    <footer>
-        <p>&copy; 2025 Calculations App. All rights reserved.</p>
-    </footer>
+{% block content %}
+<div class="calculator">
+    <h2>Calculator</h2>
+    <input type="number" id="a" placeholder="First number">
+    <input type="number" id="b" placeholder="Second number"><br>
+    <button onclick="calculate('add')">Add</button>
+    <button onclick="calculate('subtract')">Subtract</button>
+    <button onclick="calculate('multiply')">Multiply</button>
+    <button onclick="calculate('divide')">Divide</button>
+    <div class="result" id="result"></div>
+</div>
 
-    <script src="{{ url_for('static', path='js/script.js') }}"></script>
-</body>
-</html>
+<script>
+async function calculate(operation) {
+    const a = parseFloat(document.getElementById('a').value);
+    const b = parseFloat(document.getElementById('b').value);
+    const resultElement = document.getElementById('result');
+    try {
+        const response = await fetch('/' + operation, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ a: a, b: b })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            resultElement.innerText = 'Result: ' + data.result;
+        } else {
+            resultElement.innerText = 'Error: ' + data.error;
+        }
+    } catch (error) {
+        resultElement.innerText = 'Error: ' + error.message;
+    }
+}
+</script>
+{% endblock %}
