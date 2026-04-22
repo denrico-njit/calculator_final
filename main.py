@@ -6,6 +6,7 @@ from datetime import datetime, timezone, timedelta
 from fastapi import FastAPI, HTTPException, Request, Depends, status
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field, field_validator
@@ -48,6 +49,8 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
