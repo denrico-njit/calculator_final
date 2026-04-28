@@ -1,8 +1,8 @@
-# Module 12 — FastAPI Calculator with User Authentication
+# Module 14 — FastAPI Calculator with User Authentication
 
 A FastAPI application with user authentication (JWT), BREAD calculation endpoints, a PostgreSQL backend, full test suite, and a CI/CD pipeline that builds, scans, and deploys a Docker image.
 
-**Docker Hub:** https://hub.docker.com/r/de269/module11
+**Docker Hub:** https://hub.docker.com/r/de269/module14
 
 ---
 
@@ -21,7 +21,7 @@ pytest tests/integration/
 pytest tests/e2e/
 
 # All tests with coverage (excluding e2e)
-pytest --ignore=tests/e2e
+pytest --ignore=tests/e2e --cov=app --cov=main --cov-report=term-missing
 ```
 
 The `DATABASE_URL` environment variable must be set for integration and e2e tests:
@@ -42,21 +42,54 @@ docker compose up
 
 Integration tests cover the full request/response cycle against a real PostgreSQL database. Each test gets an isolated session that is truncated after the test runs.
 
+**Calculator and page routes** (`tests/integration/test_fastapi_calculator.py`):
+- `GET /health` — health check
+- `GET /`, `/register`, `/login`, `/dashboard` — page routes return 200
+- `POST /add`, `/subtract`, `/multiply`, `/divide` — basic calculator operations
+- `POST /divide` with `b=0` — divide by zero error
+
 **Auth endpoints** (`tests/integration/test_auth_endpoints.py`):
-- `POST /auth/register` — successful registration, duplicate user, password mismatch, weak password
+- `POST /auth/register` — successful registration, duplicate user, password mismatch, weak password, missing uppercase/lowercase/digit/special character
 - `POST /auth/login` — successful login, wrong password, non-existent user, login with email
+- `POST /auth/token` — form-based login (Swagger UI), valid and invalid credentials
 
 **Calculation endpoints** (`tests/integration/test_calculation_endpoints.py`):
 - `POST /calculations` — add calculation, divide by zero, unauthenticated request
 - `GET /calculations` — browse all calculations for current user, empty list
 - `GET /calculations/{id}` — read specific calculation, not found
-- `PUT /calculations/{id}` — edit calculation, not found
+- `PUT /calculations/{id}` — edit calculation, divide by zero, not found
 - `DELETE /calculations/{id}` — delete calculation and verify removal, not found
 
-Run just the new endpoint tests:
+Run with coverage:
 
 ```bash
-pytest tests/integration/test_auth_endpoints.py tests/integration/test_calculation_endpoints.py -v
+pytest --cov=app --cov=main --cov-report=term-missing -v
+```
+
+---
+
+## E2E Tests
+
+End-to-end tests use Playwright to drive a real browser against a running server. The server must be running before these tests execute.
+
+**Dashboard BREAD operations** (`tests/e2e/test_dashboard_e2e.py`):
+- Add a calculation via the form — row appears in the table
+- Browse calculations created via API — appear on page load
+- Edit a calculation via the modal — row updates in place
+- Delete a calculation — row disappears
+- Visit `/dashboard` without a token — redirects to `/login`
+- Add with divide by zero — client-side error, no submission
+- Edit with divide by zero — client-side error in the modal
+
+**Auth and calculator** (`tests/e2e/test_e2e.py`):
+- Calculator add and divide by zero on the home page
+- Register success and short password error
+- Login success and wrong password error
+
+Run E2E tests:
+
+```bash
+pytest tests/e2e/ -v -m e2e
 ```
 
 ---
