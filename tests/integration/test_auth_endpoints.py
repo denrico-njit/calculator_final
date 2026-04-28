@@ -101,3 +101,49 @@ def test_login_with_email(client, register_payload):
     })
     assert response.status_code == 200
     assert "access_token" in response.json()
+
+
+# /auth/token (form-based) tests
+def test_token_login_success(client, register_payload):
+    client.post("/auth/register", json=register_payload)
+    response = client.post("/auth/token", data={
+        "username": "johndoe",
+        "password": "SecurePass1!"
+    })
+    assert response.status_code == 200
+    assert "access_token" in response.json()
+    assert response.json()["token_type"] == "bearer"
+
+
+def test_token_login_wrong_password(client, register_payload):
+    client.post("/auth/register", json=register_payload)
+    response = client.post("/auth/token", data={
+        "username": "johndoe",
+        "password": "WrongPass1!"
+    })
+    assert response.status_code == 401
+
+
+# Password validator tests
+def test_register_password_no_lowercase(client, register_payload):
+    register_payload["password"] = "UPPERCASE1!"
+    register_payload["confirm_password"] = "UPPERCASE1!"
+    response = client.post("/auth/register", json=register_payload)
+    assert response.status_code == 400
+    assert "lowercase" in response.json()["error"].lower()
+
+
+def test_register_password_no_digit(client, register_payload):
+    register_payload["password"] = "NoDigits!!"
+    register_payload["confirm_password"] = "NoDigits!!"
+    response = client.post("/auth/register", json=register_payload)
+    assert response.status_code == 400
+    assert "digit" in response.json()["error"].lower()
+
+
+def test_register_password_no_special(client, register_payload):
+    register_payload["password"] = "NoSpecial1"
+    register_payload["confirm_password"] = "NoSpecial1"
+    response = client.post("/auth/register", json=register_payload)
+    assert response.status_code == 400
+    assert "special" in response.json()["error"].lower()

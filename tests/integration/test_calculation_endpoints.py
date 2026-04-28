@@ -123,6 +123,14 @@ def test_edit_calculation_not_found(client, auth_headers):
     )
     assert response.status_code == 404
 
+def test_edit_calculation_divide_by_zero(client, auth_headers, calc_payload):
+    created = client.post("/calculations", json=calc_payload, headers=auth_headers).json()
+    response = client.put(
+        f"/calculations/{created['id']}",
+        json={"operation": "divide", "b": 0},
+        headers=auth_headers
+    )
+    assert response.status_code == 400
 
 # ------------------------------------------------------------------------------
 # Delete tests

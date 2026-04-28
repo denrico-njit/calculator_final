@@ -152,3 +152,29 @@ def test_divide_by_zero_api(client):
     # Assert that the 'error' field contains the correct error message
     assert "Cannot divide by zero!" in response.json()['error'], \
         f"Expected error message 'Cannot divide by zero!', got '{response.json()['error']}'"
+
+
+def test_health(client):
+    response = client.get('/health')
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
+def test_index_page(client):
+    response = client.get('/')
+    assert response.status_code == 200
+
+
+def test_register_page(client):
+    response = client.get('/register')
+    assert response.status_code == 200
+
+
+def test_login_page(client):
+    response = client.get('/login')
+    assert response.status_code == 200
+
+
+def test_dashboard_page(client):
+    response = client.get('/dashboard')
+    assert response.status_code == 200
