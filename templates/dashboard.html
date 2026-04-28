@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td class="px-6 py-4 whitespace-nowrap">${calc.a}</td>
                     <td class="px-6 py-4 whitespace-nowrap font-medium">${symbol}</td>
                     <td class="px-6 py-4 whitespace-nowrap">${calc.b}</td>
-                    <td class="px-6 py-4 whitespace-nowrap font-semibold">${calc.result}</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-semibold">${parseFloat(calc.result.toFixed(8))}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-sm">${date}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <button class="text-indigo-600 hover:text-indigo-900 edit-calc mr-3"
