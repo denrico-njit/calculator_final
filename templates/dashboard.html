@@ -37,20 +37,26 @@
         <div class="bg-white shadow rounded-lg mb-6 p-4">
             <h2 class="text-lg font-semibold mb-4">New Calculation</h2>
             <form id="calculationForm" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Type</label>
-                        <select id="calcType" name="type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <option value="addition">Addition</option>
-                            <option value="subtraction">Subtraction</option>
-                            <option value="multiplication">Multiplication</option>
-                            <option value="division">Division</option>
+                        <label class="block text-sm font-medium text-gray-700">Number A</label>
+                        <input type="number" id="calcA" name="a" step="any" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Operation</label>
+                        <select id="calcOperation" name="operation"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="add">Addition (+)</option>
+                            <option value="subtract">Subtraction (-)</option>
+                            <option value="multiply">Multiplication (x)</option>
+                            <option value="divide">Division (/)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Numbers (comma-separated)</label>
-                        <input type="text" id="calcInputs" name="inputs" placeholder="e.g. 5,10,15" 
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <label class="block text-sm font-medium text-gray-700">Number B</label>
+                        <input type="number" id="calcB" name="b" step="any" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                     </div>
                 </div>
                 <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
@@ -66,8 +72,9 @@
                 <table class="min-w-full table-auto">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inputs</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">A</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Op</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">B</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Result</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
@@ -79,6 +86,45 @@
                 </table>
             </div>
         </div>
+    </div>
+</div>
+<!-- Edit Modal -->
+<div id="editModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+        <h2 class="text-lg font-semibold mb-4">Edit Calculation</h2>
+        <form id="editForm" class="space-y-4">
+            <input type="hidden" id="editCalcId">
+            <div>
+                <label for="editA" class="block text-sm font-medium text-gray-700">Number A</label>
+                <input type="number" id="editA" step="any" required
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            </div>
+            <div>
+                <label for="editOperation" class="block text-sm font-medium text-gray-700">Operation</label>
+                <select id="editOperation"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <option value="add">Addition (+)</option>
+                    <option value="subtract">Subtraction (-)</option>
+                    <option value="multiply">Multiplication (x)</option>
+                    <option value="divide">Division (/)</option>
+                </select>
+            </div>
+            <div>
+                <label for="editB" class="block text-sm font-medium text-gray-700">Number B</label>
+                <input type="number" id="editB" step="any" required
+                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+            </div>
+            <div class="flex justify-end gap-3 pt-2">
+                <button type="button" id="cancelEdit"
+                        class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                    Save Changes
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -139,7 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show a message when no calculations exist
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
                         No calculations found. Create your first calculation above!
                     </td>
                 `;
@@ -147,19 +193,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+            const OP_SYMBOLS = { add: '+', subtract: '-', multiply: 'x', divide: '/' };
+
             calculations.forEach(calc => {
                 const row = document.createElement('tr');
+                const symbol = OP_SYMBOLS[calc.operation] ?? calc.operation;
+                const date = new Date(calc.timestamp).toLocaleString();
                 row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap">${calc.type}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${calc.inputs.join(', ')}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${calc.result}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${new Date(calc.created_at).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${calc.a}</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-medium">${symbol}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">${calc.b}</td>
+                    <td class="px-6 py-4 whitespace-nowrap font-semibold">${calc.result}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-sm">${date}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
+                        <button class="text-indigo-600 hover:text-indigo-900 edit-calc mr-3"
+                                data-id="${calc.id}"
+                                data-a="${calc.a}"
+                                data-b="${calc.b}"
+                                data-operation="${calc.operation}">Edit</button>
                         <button class="text-red-600 hover:text-red-900 delete-calc" data-id="${calc.id}">Delete</button>
                     </td>
+
                 `;
                 tableBody.appendChild(row);
             });
+
 
             // Add delete event listeners
             document.querySelectorAll('.delete-calc').forEach(button => {
@@ -193,6 +251,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             });
+            document.querySelectorAll('.edit-calc').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('editCalcId').value = btn.dataset.id;
+                    document.getElementById('editA').value = btn.dataset.a;
+                    document.getElementById('editB').value = btn.dataset.b;
+                    document.getElementById('editOperation').value = btn.dataset.operation;
+                    document.getElementById('editModal').classList.remove('hidden');
+                });
+            });
         } catch (error) {
             showError('Error loading calculations');
         }
@@ -201,21 +268,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle new calculation submission
     document.getElementById('calculationForm').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        const inputs = document.getElementById('calcInputs').value
-            .split(',')
-            .map(num => parseFloat(num.trim()))
-            .filter(num => !isNaN(num));
 
-        if (inputs.length < 2) {
-            showError('Please enter at least two valid numbers');
+        const a = parseFloat(document.getElementById('calcA').value);
+        const b = parseFloat(document.getElementById('calcB').value);
+        const operation = document.getElementById('calcOperation').value;
+
+        if (isNaN(a) || isNaN(b)) {
+            showError('Please enter valid numbers for A and B');
             return;
         }
-
-        const calculationData = {
-            type: document.getElementById('calcType').value,
-            inputs: inputs
-        };
+        if (operation === 'divide' && b === 0) {
+            showError('Cannot divide by zero');
+            return;
+        }
 
         try {
             const response = await fetch('/calculations', {
@@ -224,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(calculationData)
+                body: JSON.stringify({ a, b, operation })
             });
 
             if (!response.ok) {
@@ -233,7 +298,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.href = '/login';
                     return;
                 }
-                throw new Error('Failed to create calculation');
+                const err = await response.json().catch(() => ({}));
+                showError(err.error ?? err.detail ?? 'Failed to create calculation');
+                return;
             }
 
             showSuccess('Calculation created successfully');
@@ -241,6 +308,56 @@ document.addEventListener('DOMContentLoaded', function() {
             loadCalculations();
         } catch (error) {
             showError('Error creating calculation');
+        }
+    });
+
+    document.getElementById('cancelEdit').addEventListener('click', () => {
+        document.getElementById('editModal').classList.add('hidden');
+    });
+
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+        const id = document.getElementById('editCalcId').value;
+        const a = parseFloat(document.getElementById('editA').value);
+        const b = parseFloat(document.getElementById('editB').value);
+        const operation = document.getElementById('editOperation').value;
+
+        if (isNaN(a) || isNaN(b)) {
+            showError('Please enter valid numbers for A and B');
+            return;
+        }
+        if (operation === 'divide' && b === 0) {
+            showError('Cannot divide by zero');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/calculations/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ a, b, operation })
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.clear();
+                    window.location.href = '/login';
+                    return;
+                }
+                const err = await response.json().catch(() => ({}));
+                showError(err.error ?? err.detail ?? 'Failed to update calculation');
+                return;
+            }
+
+            document.getElementById('editModal').classList.add('hidden');
+            showSuccess('Calculation updated successfully');
+            loadCalculations();
+        } catch (error) {
+            showError('Error updating calculation');
         }
     });
 
