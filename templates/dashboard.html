@@ -88,6 +88,37 @@
         </div>
     </div>
 </div>
+<!-- View Modal -->
+<div id="viewModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+        <h2 class="text-lg font-semibold mb-4">Calculation Details</h2>
+        <dl class="space-y-3 text-sm">
+            <div class="flex justify-between">
+                <dt class="font-medium text-gray-500">ID</dt>
+                <dd id="viewId" class="text-gray-900 break-all ml-4"></dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="font-medium text-gray-500">Expression</dt>
+                <dd id="viewExpression" class="text-gray-900"></dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="font-medium text-gray-500">Result</dt>
+                <dd id="viewResult" class="text-gray-900 font-semibold"></dd>
+            </div>
+            <div class="flex justify-between">
+                <dt class="font-medium text-gray-500">Date</dt>
+                <dd id="viewDate" class="text-gray-900"></dd>
+            </div>
+        </dl>
+        <div class="flex justify-end pt-4">
+            <button id="closeView"
+                    class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300">
+                Close
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Edit Modal -->
 <div id="editModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
@@ -207,6 +238,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td class="px-6 py-4 whitespace-nowrap font-semibold">${parseFloat(calc.result.toFixed(8))}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-sm">${date}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
+                        <button class="text-gray-600 hover:text-gray-900 view-calc mr-3"
+                                data-id="${calc.id}">View</button>
                         <button class="text-indigo-600 hover:text-indigo-900 edit-calc mr-3"
                                 data-id="${calc.id}"
                                 data-a="${calc.a}"
@@ -261,6 +294,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('editModal').classList.remove('hidden');
                 });
             });
+
+            document.querySelectorAll('.view-calc').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const response = await fetch(`/calculations/${btn.dataset.id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (response.status === 401) { localStorage.clear(); window.location.href = '/login'; return; }
+                    if (!response.ok) { showError('Failed to load calculation'); return; }
+
+                    const calc = await response.json();
+                    const symbol = { add: '+', subtract: '-', multiply: 'x', divide: '/' }[calc.operation] ?? calc.operation;
+                    document.getElementById('viewId').textContent = calc.id;
+                    document.getElementById('viewExpression').textContent = `${calc.a} ${symbol} ${calc.b}`;
+                    document.getElementById('viewResult').textContent = parseFloat(calc.result.toFixed(8));
+                    document.getElementById('viewDate').textContent = new Date(calc.timestamp).toLocaleString();
+                    document.getElementById('viewModal').classList.remove('hidden');
+                });
+            });
         } catch (error) {
             showError('Error loading calculations');
         }
@@ -310,6 +361,10 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             showError('Error creating calculation');
         }
+    });
+
+    document.getElementById('closeView').addEventListener('click', () => {
+        document.getElementById('viewModal').classList.add('hidden');
     });
 
     document.getElementById('cancelEdit').addEventListener('click', () => {

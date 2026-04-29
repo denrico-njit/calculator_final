@@ -91,6 +91,29 @@ def test_dashboard_browse_calculations(page, fastapi_server):
 
 
 @pytest.mark.e2e
+def test_dashboard_view_calculation(page, fastapi_server):
+    """User clicks View; the modal shows the correct calculation details."""
+    username = register_user()
+    token = get_token(username)
+    create_calculation(token, a=10, b=5, operation='add')
+
+    login(page, username)
+    page.wait_for_selector('#calculationsTable tr')
+
+    page.click('.view-calc')
+    page.wait_for_selector('#viewModal:not(.hidden)')
+
+    modal = page.inner_text('#viewModal')
+    assert '10' in modal
+    assert '+' in modal
+    assert '5' in modal
+    assert '15' in modal
+
+    page.click('#closeView')
+    page.wait_for_selector('#viewModal.hidden')
+
+
+@pytest.mark.e2e
 def test_dashboard_edit_calculation(page, fastapi_server):
     """User edits a calculation via the modal; the row updates."""
     username = register_user()
