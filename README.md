@@ -2,7 +2,7 @@
 
 A FastAPI application with user authentication (JWT), BREAD calculation endpoints, a PostgreSQL backend, full test suite, and a CI/CD pipeline that builds, scans, and deploys a Docker image.
 
-**Docker Hub:** https://hub.docker.com/r/de269/module14
+**Docker Hub:** https://hub.docker.com/repository/docker/de269/calculator_final
 
 ---
 
