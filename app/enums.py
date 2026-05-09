@@ -6,3 +6,4 @@ class OperationType(enum.Enum):
     subtract = "subtract"
     multiply = "multiply"
     divide = "divide"
+    power = "power"

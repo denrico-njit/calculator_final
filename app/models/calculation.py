@@ -25,13 +25,14 @@ class Calculation(Base):
     @classmethod
     def create(cls, db, user_id: UUID, type: OperationType, a: float, b: float) -> "Calculation":
         """Factory method to create and store a new calculation."""
-        from app.operations import add, subtract, multiply, divide
+        from app.operations import add, subtract, multiply, divide, power
 
         operations = {
             OperationType.add: add,
             OperationType.subtract: subtract,
             OperationType.multiply: multiply,
             OperationType.divide: divide,   
+            OperationType.power: power
         }
 
         result = operations[type](a, b)
