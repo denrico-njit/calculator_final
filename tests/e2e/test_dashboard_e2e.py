@@ -110,7 +110,7 @@ def test_dashboard_view_calculation(page, fastapi_server):
     assert '15' in modal
 
     page.click('#closeView')
-    page.wait_for_selector('#viewModal.hidden')
+    page.wait_for_selector('#viewModal.hidden', state='attached') 
 
 
 @pytest.mark.e2e
