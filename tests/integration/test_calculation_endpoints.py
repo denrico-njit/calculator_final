@@ -132,6 +132,27 @@ def test_edit_calculation_divide_by_zero(client, auth_headers, calc_payload):
     )
     assert response.status_code == 400
 
+                                                                                                                                                            
+def test_power_calculation(client, auth_headers):                                                                                                           
+    response = client.post("/calculations", json={"a": 2, "b": 3, "operation": "power"}, headers=auth_headers)                                              
+    assert response.status_code == 201                                                                                                                      
+    data = response.json()                                                                                                                                  
+    assert data["result"] == 8.0                                                                                                                            
+    assert data["operation"] == "power"                                                                                                                   
+                                                                                                                                                            
+
+def test_edit_calculation_power(client, auth_headers, calc_payload):                                                                                        
+    created = client.post("/calculations", json=calc_payload, headers=auth_headers).json()                                                                
+    response = client.put(                                                                                                                                  
+        f"/calculations/{created['id']}",
+        json={"a": 3, "b": 4, "operation": "power"},                                                                                                        
+        headers=auth_headers                                                                                                                                
+    )
+    assert response.status_code == 200                                                                                                                      
+    data = response.json()                                                                                                                                
+    assert data["result"] == 81.0
+    assert data["operation"] == "power"    
+
 # ------------------------------------------------------------------------------
 # Delete tests
 # ------------------------------------------------------------------------------
