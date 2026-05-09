@@ -57,6 +57,23 @@ def test_calculator_divide_by_zero(page, fastapi_server):
     page.wait_for_function("document.getElementById('result').innerText !== ''")
     assert page.inner_text('#result') == 'Error: Cannot divide by zero!'
 
+@pytest.mark.e2e                                                                                                                                            
+def test_calculator_power(page, fastapi_server):                                                                                                            
+    """                                                                                                                                                     
+    Test the power functionality of the calculator.                                                                                                       
+                                                                                                                                                            
+    This test simulates a user performing an exponentiation operation using the                                                                           
+    calculator on the frontend. It fills in two numbers, clicks the "Power" button,                                                                         
+    and verifies that the result displayed is correct.                                                                                                      
+    """                                                                                                                                                     
+    page.goto('http://localhost:8000')                                                                                                                      
+    page.fill('#a', '2')                                                                                                                                    
+    page.fill('#b', '3')                                                                                                                                    
+    page.click('button:text("Power")')
+                                                                                                                                                            
+    page.wait_for_function("document.getElementById('result').innerText !== ''")                                                                            
+    assert page.inner_text('#result') == 'Result: 8'  
+
 @pytest.mark.e2e
 def test_register_success(page, fastapi_server):
     """

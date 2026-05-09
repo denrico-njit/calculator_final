@@ -204,3 +204,25 @@ def test_dashboard_edit_divide_by_zero(page, fastapi_server):
 
     page.wait_for_selector('#errorAlert:not(.hidden)')
     assert 'divide by zero' in page.inner_text('#errorAlert').lower()
+
+
+@pytest.mark.e2e                                                                                                                                            
+def test_dashboard_power_calculation(page, fastapi_server):                                                                                                 
+    """User submits a power calculation; the correct result appears in the table."""                                                                        
+    username = register_user()                                                                                                                              
+    login(page, username)                                                                                                                                   
+                                                                                                                                                            
+    page.fill('#calcA', '2')                                                                                                                              
+    page.select_option('#calcOperation', 'power')
+    page.fill('#calcB', '3')                                                                                                                                
+    page.click('#calculationForm button[type="submit"]')
+                                                                                                                                                            
+    page.wait_for_selector('#successAlert:not(.hidden)')                                                                                                    
+    assert 'created' in page.inner_text('#successAlert').lower()
+                                                                                                                                                            
+    page.wait_for_selector('#calculationsTable tr')                                                                                                         
+    table = page.inner_text('#calculationsTable')
+    assert '2' in table                                                                                                                                     
+    assert '^' in table                                                                                                                                   
+    assert '3' in table                                                                                                                                     
+    assert '8' in table
