@@ -52,3 +52,12 @@ def test_calculation_persisted(db_session, test_user):
     fetched = db_session.query(Calculation).filter_by(id=calc.id).first()
     assert fetched is not None
     assert fetched.result == 2
+
+def test_create_power(db_session, test_user):                                                                                                               
+    # Power result should be stored correctly and linked to the user                                                                                        
+    calc = Calculation.create(db_session, test_user.id, OperationType.power, 2, 3)                                                                          
+    db_session.commit()                                                                                                                                     
+    db_session.refresh(calc)                                                                                                                                
+    assert calc.result == 8                                                                                                                                 
+    assert calc.operation == OperationType.power  
+  
