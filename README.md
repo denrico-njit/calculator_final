@@ -400,6 +400,24 @@ Then submit the GitHub repository link as instructed.
 
 ---
 
+# 🧠 Reflection
+
+Taking the calculator from a simple command-line REPL to a full-stack web
+application with user authentication and persistent storage has been quite the
+experience.                                                                  
+                                                                              
+The object-oriented foundation felt natural from the start—I've developed a few small projects for a class I used to teach. Writing operations as objects with clear responsibilities mapped well to how I already thought about code. My first challenge came as design patterns were introduced. The factory pattern in particular felt like solving a problem I didn't have yet; abstracting over object creation seemed like ceremony for its own sake. It wasn't until the operation registry needed to support new types without touching existing logic that the pattern clicked. The structure I'd resisted was exactly what made adding the power operation painless.
+
+Testing and CI/CD told a similar story. Early on, writing tests alongside     
+every feature felt like paying a tax — more code, slower iteration. Additional overhead
+that slowed me down. And then the application ballooned to include atabase sessions, JWT auth,Playwright end-to-end flows — and suddenly a failing test pinpointed exactly where I'd gone wrong without having to sort through traces and logs. The debugging time saved in the second half of the project more than recovered what the test-writing cost in the first, and I guess that's the point, isn't it?
+
+I imagine CI/CD operates the same way: invisible when everything is fine, absolute gold
+when it catches a bad commit before it reaches production. This payoff wasn't quite relevant for me, but I can see how it comes into play for large teams/projects.
+
+Overall I feel like I've been led to the top of a mountain by an experienced sherpa. I'm not quite sure how we got to the summit, but looking back I'm impressed with what I've done and hope to do it again soon.
+---
+
 # 📎 Quick Links
 
 - [Homebrew](https://brew.sh/)
