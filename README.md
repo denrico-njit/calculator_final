@@ -2,6 +2,8 @@
 
 A FastAPI application with user authentication (JWT), BREAD calculation endpoints, a PostgreSQL backend, full test suite, and a CI/CD pipeline that builds, scans, and deploys a Docker image.
 
+**GitHub Repository:** https://github.com/denrico-njit/calculator_final
+
 **Docker Hub:** https://hub.docker.com/repository/docker/de269/calculator_final
 
 ---
@@ -321,31 +323,38 @@ pip install -r requirements.txt
 ## Build Docker Image
 
 ```bash
-docker build -t <image-name> .
+docker build -t de269/calculator_final .
 ```
 
 ## Run Docker Container
 
 ```bash
-docker run -it --rm <image-name>
+docker run -it --rm de269/calculator_final
 ```
 
 ---
 
 # 🚀 6. Running the Project
 
-- **Without Docker**:
+The easiest way to run the full stack (app + PostgreSQL) is with Docker Compose:
 
 ```bash
-python main.py
+docker compose up
 ```
 
-(or update this if the main script is different.)
+Then open **http://localhost:8000** in your browser.
 
-- **With Docker**:
+- **Without Docker** (requires a running PostgreSQL instance):
 
 ```bash
-docker run -it --rm <image-name>
+export DATABASE_URL=postgresql://postgres:postgres@localhost:5432/fastapi_db
+uvicorn main:app --reload
+```
+
+- **With Docker (image only)**:
+
+```bash
+docker run -it --rm -e DATABASE_URL=postgresql://postgres:postgres@localhost:5432/fastapi_db -p 8000:8000 de269/calculator_final
 ```
 
 ---
@@ -376,8 +385,8 @@ Then submit the GitHub repository link as instructed.
 | Create Virtual Environment     | `python3 -m venv venv`                           |
 | Activate Virtual Environment   | `source venv/bin/activate` / `venv\Scripts\activate.bat` |
 | Install Python Packages        | `pip install -r requirements.txt`               |
-| Build Docker Image              | `docker build -t <image-name> .`                |
-| Run Docker Container            | `docker run -it --rm <image-name>`               |
+| Build Docker Image              | `docker build -t de269/calculator_final .`       |
+| Run Docker Container            | `docker run -it --rm de269/calculator_final`     |
 | Push Code to GitHub             | `git add . && git commit -m "message" && git push` |
 
 ---
