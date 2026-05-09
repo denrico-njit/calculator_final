@@ -2,7 +2,7 @@
 
 import pytest  # Import the pytest framework for writing and running tests
 from typing import Union  # Import Union for type hinting multiple possible types
-from app.operations import add, subtract, multiply, divide  # Import the calculator functions from the operations module
+from app.operations import add, subtract, multiply, divide, power  # Import the calculator functions from the operations module
 
 # Define a type alias for numbers that can be either int or float
 Number = Union[int, float]
@@ -232,3 +232,47 @@ def test_divide_by_zero() -> None:
     # Assert that the exception message contains the expected error message
     assert "Cannot divide by zero!" in str(excinfo.value), \
         f"Expected error message 'Cannot divide by zero!', but got '{excinfo.value}'"
+
+# ---------------------------------------------                                                                                                             
+# Unit Tests for the 'power' Function                                                                                                                     
+# ---------------------------------------------
+
+@pytest.mark.parametrize(
+    "a, b, expected",
+    [
+        (2, 3, 8),        # positive integer base and exponent
+        (2, -1, 0.5),     # negative exponent                                                                                                               
+        (5, 0, 1),        # zero exponent
+        (0, 5, 0),        # zero base                                                                                                                       
+        (0, 0, 1),        # 0^0 returns 1 by convention                                                                                                   
+    ],                                                                                                                                                      
+    ids=[
+        "power_positive_integers",                                                                                                                          
+        "power_negative_exponent",                                                                                                                        
+        "power_zero_exponent",
+        "power_zero_base",
+        "power_zero_zero",                                                                                                                                  
+    ]
+)                                                                                                                                                           
+def test_power(a: Number, b: Number, expected: Number) -> None:                                                                                           
+    """
+    Test the 'power' function with various base and exponent combinations.
+
+    This parameterized test verifies that the 'power' function correctly raises
+    a base to a given exponent for positive, negative, zero, and fractional cases.                                                                          
+                                                                                                                                                            
+    Parameters:                                                                                                                                             
+    - a (Number): The base.                                                                                                                                 
+    - b (Number): The exponent.                                                                                                                           
+    - expected (Number): The expected result of the exponentiation.                                                                                         
+
+    Steps:                                                                                                                                                  
+    1. Call the 'power' function with arguments 'a' and 'b'.                                                                                              
+    2. Assert that the result is equal to 'expected'.                                                                                                       
+
+    Example:                                                                                                                                                
+    >>> test_power(2, 3, 8)                                                                                                                               
+    >>> test_power(5, 0, 1)                                                                                                                                 
+    """
+    result = power(a, b)                                                                                                                                    
+    assert result == expected, f"Expected power({a}, {b}) to be {expected}, but got {result}" 
