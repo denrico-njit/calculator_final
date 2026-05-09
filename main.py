@@ -12,7 +12,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.orm import Session
 
-from app.operations import add, subtract, multiply, divide
+from app.operations import add, subtract, multiply, divide, power
 from app.database import get_db, engine
 from app.models.user import Base, User
 from app.schemas.user import UserCreate, UserResponse, UserLogin
@@ -147,7 +147,13 @@ async def divide_route(operation: OperationRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-
+@app.post("/power", response_model=OperationResponse, responses={400: {"model": ErrorResponse}})                                                            
+async def power_route(operation: OperationRequest):                                                                                                         
+    try:                                                                                                                                                    
+        return OperationResponse(result=power(operation.a, operation.b))
+    except Exception as e:                                                                                                                                  
+        raise HTTPException(status_code=400, detail=str(e))
+    
 # ------------------------------------------------------------------------------
 # Auth endpoints
 # ------------------------------------------------------------------------------
@@ -295,12 +301,13 @@ def edit_calculation(
         calculation.operation = update_data.operation
 
     try:
-        from app.operations import add, subtract, multiply, divide
+        from app.operations import add, subtract, multiply, divide, power
         ops = {
             OperationType.add: add,
             OperationType.subtract: subtract,
             OperationType.multiply: multiply,
             OperationType.divide: divide,
+            OperationType.power: power
         }
         calculation.result = ops[calculation.operation](calculation.a, calculation.b)
     except ValueError as e:
