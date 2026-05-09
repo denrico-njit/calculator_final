@@ -51,6 +51,7 @@
                             <option value="subtract">Subtraction (-)</option>
                             <option value="multiply">Multiplication (x)</option>
                             <option value="divide">Division (/)</option>
+                            <option value="power">Power (^)</option>
                         </select>
                     </div>
                     <div>
@@ -138,6 +139,7 @@
                     <option value="subtract">Subtraction (-)</option>
                     <option value="multiply">Multiplication (x)</option>
                     <option value="divide">Division (/)</option>
+                    <option value="power">Power (^)</option>
                 </select>
             </div>
             <div>
@@ -225,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             calculations.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-            const OP_SYMBOLS = { add: '+', subtract: '-', multiply: 'x', divide: '/' };
+            const OP_SYMBOLS = { add: '+', subtract: '-', multiply: 'x', divide: '/', power: '^' };
 
             calculations.forEach(calc => {
                 const row = document.createElement('tr');
@@ -304,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (!response.ok) { showError('Failed to load calculation'); return; }
 
                     const calc = await response.json();
-                    const symbol = { add: '+', subtract: '-', multiply: 'x', divide: '/' }[calc.operation] ?? calc.operation;
+                    const symbol = { add: '+', subtract: '-', multiply: 'x', divide: '/', power: '^' }[calc.operation] ?? calc.operation;
                     document.getElementById('viewId').textContent = calc.id;
                     document.getElementById('viewExpression').textContent = `${calc.a} ${symbol} ${calc.b}`;
                     document.getElementById('viewResult').textContent = parseFloat(calc.result.toFixed(8));
