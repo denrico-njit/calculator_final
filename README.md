@@ -1,4 +1,4 @@
-# Module 14 — FastAPI Calculator with User Authentication
+# FastAPI Calculator with User Authentication (Final Submission)
 
 A FastAPI application with user authentication (JWT), BREAD calculation endpoints, a PostgreSQL backend, full test suite, and a CI/CD pipeline that builds, scans, and deploys a Docker image.
 
@@ -45,7 +45,7 @@ Integration tests cover the full request/response cycle against a real PostgreSQ
 **Calculator and page routes** (`tests/integration/test_fastapi_calculator.py`):
 - `GET /health` — health check
 - `GET /`, `/register`, `/login`, `/dashboard` — page routes return 200
-- `POST /add`, `/subtract`, `/multiply`, `/divide` — basic calculator operations
+- `POST /add`, `/subtract`, `/multiply`, `/divide`, `/power` — basic calculator operations
 - `POST /divide` with `b=0` — divide by zero error
 
 **Auth endpoints** (`tests/integration/test_auth_endpoints.py`):
@@ -57,7 +57,7 @@ Integration tests cover the full request/response cycle against a real PostgreSQ
 - `POST /calculations` — add calculation, divide by zero, unauthenticated request
 - `GET /calculations` — browse all calculations for current user, empty list
 - `GET /calculations/{id}` — read specific calculation, not found
-- `PUT /calculations/{id}` — edit calculation, divide by zero, not found
+- `PUT /calculations/{id}` — edit calculation, power operation, divide by zero, not found
 - `DELETE /calculations/{id}` — delete calculation and verify removal, not found
 
 Run with coverage:
@@ -78,11 +78,12 @@ End-to-end tests use Playwright to drive a real browser against a running server
 - Edit a calculation via the modal — row updates in place
 - Delete a calculation — row disappears
 - Visit `/dashboard` without a token — redirects to `/login`
+- Add a power calculation — row appears with correct result
 - Add with divide by zero — client-side error, no submission
 - Edit with divide by zero — client-side error in the modal
 
 **Auth and calculator** (`tests/e2e/test_e2e.py`):
-- Calculator add and divide by zero on the home page
+- Calculator add, power, and divide by zero on the home page
 - Register success and short password error
 - Login success and wrong password error
 
