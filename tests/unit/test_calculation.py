@@ -50,3 +50,11 @@ def test_calculation_create_missing_fields():
     # Missing required fields should raise a ValidationError
     with pytest.raises(ValidationError):
         CalculationCreate(a=1)
+
+
+def test_calculation_create_valid_power():                                                                                                                  
+    # Valid power operation should be accepted without error                                                                                                
+    calc = CalculationCreate(a=2, b=3, operation=OperationType.power)                                                                                       
+    assert calc.a == 2                                                                                                                                      
+    assert calc.b == 3                                                                                                                                      
+    assert calc.operation == OperationType.power 
